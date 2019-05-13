@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'cu80io7i79%dy(gb+0%o#hz=5e(!6@8g7bso(lte96n22%__6!'
+SECRET_KEY = 'kchy++c0cysa4yr2-g=0i0q-7&j*i&qkw7=h!=xhjb=bak%q!z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,13 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'todo.apps.TodoConfig',
     'corsheaders',
-    'todo',
-    
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -124,7 +124,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
- # we whitelist localhost:3000 because that's where frontend will be served
-CORS_ORIGIN_WHITELIST = (
-    'localhost:3000/'
-    )
+CORS_ORIGIN_ALLOW_ALL = True     
+

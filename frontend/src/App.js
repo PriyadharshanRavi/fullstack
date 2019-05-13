@@ -1,62 +1,28 @@
 import React, { Component } from "react";
     import Modal from "./components/Modal";
+    import axios from "axios";
 
-    const todoItems = [
-      {
-    id:1, 
-    title: "Revise Django",
-    description: "Learn Django and build some backend stuffs",
-    completed: false 
-  },
-  {
-    id:2, 
-    title: "Revise Python",
-    description: "Learn Python again and build amazing stuffs",
-    completed: false 
-  },
-  {
-    id:3, 
-    title: "Join Coursera",
-    description: "I have seen an amazing machine learning course, Join that course and build some amazing stuffs",
-    completed: false 
-  },    
-  {
-    id:4, 
-    title: "Build stuffs",
-    description: "Learn math and build interesting stuffs",
-    completed: false 
-  },
-];
     class App extends Component {
       constructor(props) {
         super(props);
         this.state = {
-          modal: false,
           viewCompleted: false,
           activeItem: {
             title: "",
             description: "",
             completed: false
           },
-          todoList: todoItems
+          todoList: []
         };
       }
-      toggle = () => {
-        this.setState({ modal: !this.state.modal });
-      };
-      handleSubmit = item => {
-        this.toggle();
-        alert("save" + JSON.stringify(item));
-      };
-      handleDelete = item => {
-        alert("delete" + JSON.stringify(item));
-      };
-      createItem = () => {
-        const item = { title: "", description: "", completed: false };
-        this.setState({ activeItem: item, modal: !this.state.modal });
-      };
-      editItem = item => {
-        this.setState({ activeItem: item, modal: !this.state.modal });
+      componentDidMount() {
+        this.refreshList();
+      }
+      refreshList = () => {
+        axios
+          .get("http://localhost:8000/api/")
+          .then(res => this.setState({ todoList: res.data }))
+          .catch(err => console.log(err));
       };
       displayCompleted = status => {
         if (status) {
@@ -105,22 +71,50 @@ import React, { Component } from "react";
                 onClick={() => this.editItem(item)}
                 className="btn btn-secondary mr-2"
               >
-                Edit
+                {" "}
+                Edit{" "}
               </button>
               <button
                 onClick={() => this.handleDelete(item)}
                 className="btn btn-danger"
               >
-                Delete
+                Delete{" "}
               </button>
             </span>
           </li>
         ));
       };
+      toggle = () => {
+        this.setState({ modal: !this.state.modal });
+      };
+      handleSubmit = item => {
+        this.toggle();
+        if (item.id) {
+          axios
+            .put(`http://localhost:8000/api/${item.id}/`, item)
+            .then(res => this.refreshList());
+          return;
+        }
+        axios
+          .post("http://localhost:8000/api/", item)
+          .then(res => this.refreshList());
+      };
+      handleDelete = item => {
+        axios
+          .delete(`http://localhost:8000/api/${item.id}`)
+          .then(res => this.refreshList());
+      };
+      createItem = () => {
+        const item = { title: "", description: "", completed: false };
+        this.setState({ activeItem: item, modal: !this.state.modal });
+      };
+      editItem = item => {
+        this.setState({ activeItem: item, modal: !this.state.modal });
+      };
       render() {
         return (
           <main className="content">
-            <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
+            <h1 className="text-white text-uppercase text-center my-4">Things todo in Karma</h1>
             <div className="row ">
               <div className="col-md-6 col-sm-10 mx-auto p-0">
                 <div className="card p-3">
